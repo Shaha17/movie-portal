@@ -26,8 +26,12 @@ namespace movie_portal
 			try
 			{
 				var context = services.GetRequiredService<MoviePortalContext>();
-				
+				var userManager = services.GetRequiredService<UserManager<User>>();
+				var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
 				await context.Database.MigrateAsync();
+
+				await ContextHelper.Seeding(context, userManager, roleManager);
 
 				logger.LogInformation("Migrate successfull");
 			}
