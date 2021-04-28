@@ -1,0 +1,146 @@
+﻿@using System.Security.Claims
+@model movie_portal.Models.Media.MediaDTO
+@{
+    ViewData["Title"] = Model.Title;
+
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var genresListHtml = Model.Genres.Select(p => $"<a href=\"~/Media/?genre={p.Value}\">{p.Text}</a>").ToList();
+    var genresRawHtml = string.Join(", ", genresListHtml);
+}
+<div class="container w-75">
+
+    <div>
+        <h2>@Model.Title (@Model.ReleaseYear)</h2>
+        <br>
+        @if(Model.UpdateDateTime!=null)
+        {
+        <span class="text-muted font-weight-lighter">Дата обновления: @(Model.UpdateDateTime.Value.ToString("dd-MM-yyyy, HH:mm"))</span>
+        }
+    </div>
+    <div class="media">
+        <img src="~/images/@Model.ImageFileName" style="width: 30rem; max-height: 40rem;" class="mr-3"
+            alt="@Model.ImageFileName" />
+        <div class="media-body">
+            <p><b>Название:</b> @Model.Title</p>
+            <p><b>Год:</b> @(Model.ReleaseYear)</p>
+            <p><b>Режисер:</b> @Model.Director</p>
+            <p><b>Жанр:</b> @(Html.Raw(genresRawHtml))</p>
+        </div>
+    </div>
+    <div class="pt-2">
+        <p><b>Описание:</b> @(Model.Description)</p>
+    </div>
+    @if(Model.MediaFilesName.Any())
+    {
+    <div class="mb-5">
+        Ссылки на скачивание:<br>
+
+        @foreach (var file in Model.MediaFilesName)
+        {
+            <a href="~/media/@(file)" target="_blank" rel="noopener external noreferrer">Скачать: @(file.Substring(0,file.LastIndexOf('_')))</a><br>
+        }
+    </div>
+    }
+
+    <div class="mb-3">
+        <span class="text-muted font-weight-lighter">Дата публикации: @(Model.InsertDateTime.ToString("dd-MM-yyyy, HH:mm"))</span>
+        <br>
+        <span class="text-muted font-weight-lighter">Просмотров: @(Model.Views)</span>
+    </div>
+
+    <div>
+        <div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form>
+                    <input type="hidden" id="movie-id" value="@(Model.Id.ToString())">
+                    <input type="hidden" id="user-id" value="@userId">
+                    <div class="form-group">
+                        <textarea type="text" id="content"
+                        class="col-12 col-sm-12 col-md-10 col-lg-8 form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <button id="comment-send-btn" class="btn btn-success">Отправить комментарий</button>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <p>Чтобы оставить комментарий войдите в аккаунт</p>
+            }
+        </div>
+
+        <span>Комментарии (@(Model.Comments.Count))</span>
+        @foreach (var comm in Model.Comments.Where(c=>c.IsDeleted==false))
+        {
+            <div class="card mb-3" style="font-size: 0.9rem;">
+                <div class="card-header">
+                    <b class="">@(comm.User.UserName)</b><br>
+                    <span class="text-muted small font-weight-lighter">@(comm.UploadDate.ToString("dd-MMM-yyyy HH:mm"))</span>
+
+                </div>
+                <div class="card-body">
+                    @(comm.Content)
+                </div>
+                <div class="card-footer">
+                    @if(comm.UserId==userId)
+                    {
+                    <button data-comment-id="@(comm.Id)" class="btn btn-danger delete-btn">Удалить комментарий</button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(() => {
+
+            document.querySelectorAll('.delete-btn').forEach(el=>{
+                const commId =  el.dataset.commentId;
+                const userId = '@(userId)';
+                el.onclick = ()=>{
+                    $.ajax({
+                    url: '/Media/DeleteComment/',
+                    data: { commentId: commId },
+                    success: (result) => {
+                        if (!result) {
+                            return;
+                        }
+
+                        location.reload();
+                    },
+                }).fail((error) => {
+                    console.error(error);
+                });
+                }
+            })
+
+            document.getElementById('comment-send-btn').onclick = (evt) => {
+                evt.preventDefault();
+                const movieId = `${document.getElementById("movie-id").value}`;
+                const userId = `${document.getElementById("user-id").value}`;
+                const content = `${document.getElementById("content").value}`;
+
+                $.ajax({
+                    url: '/Media/AddComment/',
+                    data: { id: movieId, content: content },
+                    success: (result) => {
+                        if (!result) {
+                            return;
+                        }
+
+                        location.reload();
+                    },
+                }).fail((error) => {
+                    console.error(error);
+                });
+            }
+        })
+    </script>
+    }
+</div>

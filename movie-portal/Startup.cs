@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using movie_portal.Context;
 using movie_portal.Models.Account;
+using movie_portal.Services;
 
 namespace movie_portal
 {
@@ -28,6 +30,14 @@ namespace movie_portal
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.Configure<FormOptions>(options =>
+			{
+				// options.ValueCountLimit = int.MinValue;
+				options.ValueLengthLimit = 1024 * 1024 * 1024 * 1;
+				options.MultipartBodyLengthLimit = long.MaxValue;
+
+			});
+
 			services.AddControllersWithViews();
 
 			services.AddDbContext<MoviePortalContext>(option =>
@@ -47,6 +57,7 @@ namespace movie_portal
 
 			services.AddAuthorization();
 
+
 			services.Configure<IdentityOptions>(option =>
 			{
 				option.Password.RequireDigit = false;
@@ -62,6 +73,8 @@ namespace movie_portal
 				option.ExpireTimeSpan = TimeSpan.FromMinutes(60);
 				option.SlidingExpiration = true;
 			});
+
+			services.InitServices();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
