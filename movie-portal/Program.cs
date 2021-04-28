@@ -1,3 +1,4 @@
+using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,21 @@ namespace movie_portal
 				var context = services.GetRequiredService<MoviePortalContext>();
 				var userManager = services.GetRequiredService<UserManager<User>>();
 				var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+				var webHostEnvironment = services.GetRequiredService<IWebHostEnvironment>();
+
+				if (!Directory.Exists(Path.Combine(webHostEnvironment.WebRootPath, "media")))
+				{
+					Directory.CreateDirectory(Path.Combine(webHostEnvironment.WebRootPath, "media"));
+				}
+				if (!Directory.Exists(Path.Combine(webHostEnvironment.WebRootPath, "images")))
+				{
+					Directory.CreateDirectory(Path.Combine(webHostEnvironment.WebRootPath, "images"));
+				}
 
 				await context.Database.MigrateAsync();
 
 				await ContextHelper.Seeding(context, userManager, roleManager);
+
 
 				logger.LogInformation("Migrate successfull");
 			}
@@ -40,7 +52,7 @@ namespace movie_portal
 				logger.LogError(ex.Message);
 			}
 
-			await host.RunAsync();
+			// await host.RunAsync();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
