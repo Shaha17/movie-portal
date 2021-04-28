@@ -52,7 +52,7 @@ namespace movie_portal
 				logger.LogError(ex.Message);
 			}
 
-			// await host.RunAsync();
+			await host.RunAsync();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
