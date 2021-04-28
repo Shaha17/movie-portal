@@ -441,3 +441,23 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+
+## 
+## MediaFiles
+##
+*.mov
+*.jpg
+*.png
+*.mp4
+*.mp3
+*.mkv
+*.avi	
+*.flv	
+*.m4v		
+*.mpeg	
+*.ts	
+*.vid	
+*.webm	
+*.wm
+*.wmv	

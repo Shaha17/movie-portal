@@ -11,7 +11,7 @@ namespace movie_portal.Models.Media
 		public string FileName { get; set; }
 		public DateTime InsertDate { get; set; }
 		public Guid MovieId { get; set; }
-		public Guid InsertedUserId { get; set; }
+		public string InsertedUserId { get; set; }
 		public uint Views { get; set; }
 		public bool IsDelete { get; set; }
 

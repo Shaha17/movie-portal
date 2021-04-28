@@ -15,7 +15,7 @@ namespace movie_portal.Context
 		public DbSet<Comment> Comments { get; set; }
 		public DbSet<Movie> Movies { get; set; }
 		public DbSet<MediaFile> MediaFiles { get; set; }
-		public DbSet<MediaGenre> MediaGenres { get; set; }
+		public DbSet<Genre> Genres { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

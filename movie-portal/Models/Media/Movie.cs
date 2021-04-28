@@ -11,7 +11,7 @@ namespace movie_portal.Models.Media
 	{
 		public Movie()
 		{
-			this.Genres = new List<MediaGenre>();
+			this.Genres = new List<Genre>();
 		}
 
 		[Key]
@@ -19,8 +19,8 @@ namespace movie_portal.Models.Media
 		public string Title { get; set; }
 		public string Director { get; set; }
 		public string Description { get; set; }
-		public DateTime ReleaseDate { get; set; }
-		public string Image { get; set; }
+		public uint ReleaseYear { get; set; }
+		public string ImageFileName { get; set; }
 
 
 		public string InsertUserId { get; set; }
@@ -36,7 +36,7 @@ namespace movie_portal.Models.Media
 
 
 		public virtual ICollection<Comment> Comments { get; set; }
-		public virtual ICollection<MediaGenre> Genres { get; set; }
+		public virtual ICollection<Genre> Genres { get; set; }
 		public virtual ICollection<MediaFile> MediaFiles { get; set; }
 
 

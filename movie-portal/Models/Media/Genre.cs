@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace movie_portal.Models.Media
 {
-	public class MediaGenre
+	public class Genre
 	{
-		public MediaGenre()
+		public Genre()
 		{
 			this.Movies = new List<Movie>();
 		}

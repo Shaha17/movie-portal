@@ -18,7 +18,6 @@ namespace movie_portal.Models.Account
 
 
 
-
 		[ForeignKey("UserId")]
 		public virtual User User { get; set; }
 		[ForeignKey("MovieId")]

@@ -39,17 +39,17 @@ namespace movie_portal.Context
 				}
 			}
 
-			if (!context.MediaGenres.Any())
+			if (!context.Genres.Any())
 			{
-				var mediaGenres = new List<MediaGenre>
+				var mediaGenres = new List<Genre>
 				{
-					new MediaGenre { Id = Guid.NewGuid(), Name = "Хоррор"},
-					new MediaGenre { Id = Guid.NewGuid(), Name = "Фантастика"},
-					new MediaGenre { Id = Guid.NewGuid(), Name = "Документальные"},
-					new MediaGenre { Id = Guid.NewGuid(), Name = "Комедии"},
+					new Genre { Id = Guid.NewGuid(), Name = "Хоррор"},
+					new Genre { Id = Guid.NewGuid(), Name = "Фантастика"},
+					new Genre { Id = Guid.NewGuid(), Name = "Документальные"},
+					new Genre { Id = Guid.NewGuid(), Name = "Комедии"},
 				};
 
-				context.MediaGenres.AddRange(mediaGenres);
+				context.Genres.AddRange(mediaGenres);
 				await context.SaveChangesAsync();
 			}
 		}
