@@ -4,26 +4,27 @@
 	ViewData["Title"] = "Главная";
 }
 
-<div class="row text-center p-5">
+<div class="row text-center ">
 	@foreach (var media in Model)
 	{
 		var routeDate = new Dictionary<string, string>()
 	{
 	{ "id", media.Id.ToString() },
 	};
-		@* <div class="col-8 col-sm-4 col-md-3 col-lg-2 text-center"> *@
-	 <div class="card col-12 col-sm-4 col-md-4 col-lg-4 text-center m-2" style="width: 18rem; padding:10px">
-	  <img src="~/images/@media.ImageFileName" style="width:100px; height:100px; align-self:center"
-			class="card-img-top" alt="@media.ImageFileName">
-	  <div class="card-body">
-	   <h5 class="card-title">@media.Title</h5>
-	   <p class="card-text text-truncate">@media.Description</p>
-	   <a asp-action="Details" asp-controller="Media" asp-all-route-data="routeDate"
-				class="btn btn-primary">Просмотреть</a>
-				@*<a href="~/Movie/Details/?id=@movie.Id.ToString()&category=@movie.CategoryId" class="btn
-					btn-dark">Download</a>*@
+	 <div class="col-12 col-sm-6 col-md-4 col-lg-4 text-center p-2 ">
+	  <div class="card">
+	   <img src="~/images/@media.ImageFileName"
+				style="height:20rem; max-width: 10rem; width: auto; align-self: center;" class="card-img-top"
+				alt="@media.ImageFileName">
+	   <div class="card-body">
+		<h5 class="card-title">@media.Title</h5>
+		<p class="card-text text-truncate">@media.Description</p>
+		<a asp-action="Details" asp-controller="Media" asp-all-route-data="routeDate"
+					class="btn btn-primary">Просмотреть</a>
+					@*<a href="~/Movie/Details/?id=@movie.Id.ToString()&category=@movie.CategoryId" class="btn
+						btn-dark">Download</a>*@
+	   </div>
 	  </div>
 	 </div>
-		@* </div> *@
 	}
 </div>
