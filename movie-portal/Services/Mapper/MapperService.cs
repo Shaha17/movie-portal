@@ -1,12 +1,14 @@
 using System;
 using System.Globalization;
+using movie_portal.Models.Media;
+
 namespace movie_portal.Services.Mapper
 {
 	public class MapperService : AutoMapper.Profile
 	{
 		public MapperService()
 		{
-			this.CreateMap<movie_portal.Models.Media.Movie, movie_portal.Models.Media.MediaDTO>()
+			this.CreateMap<Movie, MediaDTO>()
 				.ForMember(m => m.Description, option => option.MapFrom(m => m.Description))
 				.ForMember(m => m.Director, option => option.MapFrom(m => m.Director))
 				.ForMember(m => m.Genres, option => option.Ignore())
@@ -38,6 +40,13 @@ namespace movie_portal.Services.Mapper
 				.ForMember(m => m.UpdateDateTime, option => option.MapFrom(m => m.UpdateDateTime))
 				.ForMember(m => m.User, option => option.Ignore())
 				.ForMember(m => m.Views, option => option.MapFrom(m => m.Views));
+
+			this.CreateMap<Genre, GenreDTO>()
+				.ForMember(m => m.Id, option => option.MapFrom(m => m.Id))
+				.ForMember(m => m.Name, option => option.MapFrom(m => m.Name))
+				.ReverseMap()
+				.ForMember(m => m.Id, option => option.MapFrom(m => m.Id))
+				.ForMember(m => m.Name, option => option.MapFrom(m => m.Name));
 		}
 	}
 }

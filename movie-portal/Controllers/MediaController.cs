@@ -33,12 +33,23 @@ namespace movie_portal.Controllers
 			_moviePortalContext = moviePortalContext;
 			_webHostEnvironment = webHostEnvironment;
 			_mapper = mapper;
-
 		}
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(string genreId)
 		{
-			var lst = (await _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToListAsync());
+			var lst = new List<Movie>();
+			if (string.IsNullOrEmpty(genreId))
+			{
+				lst = (await _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToListAsync());
+			}
+			else
+			{
+				var guidGenreId = Guid.Parse(genreId);
+				lst = (await _moviePortalContext.Movies
+					.Where(m => m.IsDelete == false)
+					.Where(m => m.Genres.Any(g => g.Id.Equals(guidGenreId)))
+					.ToListAsync());
+			}
 			var dtoLst = lst.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
 			return View(dtoLst);
 		}
@@ -110,6 +121,8 @@ namespace movie_portal.Controllers
 
 			return Ok("ok");
 		}
+
+
 		[HttpGet("Details/{id}")]
 		public async Task<IActionResult> Details([FromRoute] Guid id)
 		{
@@ -134,90 +147,18 @@ namespace movie_portal.Controllers
 		public async Task<IActionResult> Create()
 		{
 			var movieDTO = new MediaDTO();
-			var genres = await _moviePortalContext.Genres.Select(p => new SelectListItem
+			var genres = await _moviePortalContext.Genres.Where(g => g.IsDelete == false).Select(p => new SelectListItem
 			{
 				Value = p.Id.ToString(),
 				Text = p.Name
 			}).ToListAsync();
 
-			movieDTO.Title = "test";
 			movieDTO.ReleaseYear = 2020;
-			movieDTO.Director = "test";
-			movieDTO.Description = "23e234\nwefwefwe";
 			movieDTO.Genres = genres;
 
 			return View(movieDTO);
 		}
 
-		[HttpPost]
-		[Authorize(Roles = "Admin")]
-		[RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 1024)]
-		public async Task<IActionResult> CreateGenre(MediaDTO model)
-		{
-
-			if (!ModelState.IsValid)
-			{
-				model.MediaFiles = null;
-				model.ImageFile = null;
-				return View(model);
-			}
-
-			string finalFileName = null;
-
-			if (model.ImageFile != null)
-			{
-				finalFileName = await CopyImageFile(model.ImageFile);
-			}
-
-			// if (model.Id != null)
-			// {
-
-			// }
-
-			//Current user id
-			var currenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-			var genresFromModel = new List<Genre>();
-			if (model.GenresId != null)
-			{
-				genresFromModel = await _moviePortalContext.Genres.Where(x => model.GenresId.Contains(x.Id)).ToListAsync();
-			}
-
-			var movie = new Movie
-			{
-				Genres = genresFromModel,
-				Description = model.Description,
-				Director = model.Director,
-				Id = Guid.NewGuid(),
-				ImageFileName = finalFileName,
-				InsertDateTime = DateTime.Now,
-				InsertUserId = currenUserId,
-				IsDelete = false,
-				ReleaseYear = model.ReleaseYear,
-				Title = model.Title,
-			};
-
-			foreach (var file in model.MediaFiles)
-			{
-				var mediaFile = new MediaFile();
-
-				//  mediaFile.FileName = await CopyMediaFile(file);
-				mediaFile.FileName = await CopyMediaFile(file);
-				mediaFile.Id = Guid.NewGuid();
-				mediaFile.InsertDate = DateTime.Now;
-				mediaFile.InsertedUserId = currenUserId;
-				mediaFile.IsDelete = false;
-				mediaFile.Movie = movie;
-				mediaFile.MovieId = movie.Id;
-				mediaFile.Views = 0;
-
-				_moviePortalContext.MediaFiles.Add(mediaFile);
-			}
-
-			_moviePortalContext.Movies.Add(movie);
-			await _moviePortalContext.SaveChangesAsync();
-			return RedirectToAction("Index", "Home");
-		}
 		[HttpPost]
 		[Authorize(Roles = "Admin")]
 		[RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 1024)]

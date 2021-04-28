@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using movie_portal.Context;
 
 namespace movie_portal.Migrations
 {
     [DbContext(typeof(MoviePortalContext))]
-    partial class MoviePortalContextModelSnapshot : ModelSnapshot
+    [Migration("20210428181009_changeModel")]
+    partial class changeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

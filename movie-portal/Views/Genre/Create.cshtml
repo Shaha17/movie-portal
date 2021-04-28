@@ -1,0 +1,51 @@
+﻿@model movie_portal.Models.Media.GenreDTO
+@{
+    ViewData["Title"] = "Добавление жанра";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            @ViewData["Title"]
+        </div>
+    </div>
+    <a></a>
+    <div class="card-body">
+        <form asp-action="Create" asp-controller="Genre" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    $(document).ready(() => {
+        $('select').select()
+
+
+        const fileInputEl = document.getElementById('photo-input');
+        const photoEl = document.getElementById('photo');
+
+
+        fileInputEl.onchange = () => {
+            const file = fileInputEl.files[0];
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                photoEl.src = reader.result;
+            };
+
+            reader.readAsDataURL(file);
+        };
+    });
+</script>
+}

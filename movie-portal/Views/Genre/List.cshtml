@@ -1,0 +1,34 @@
+﻿@model List<movie_portal.Models.Media.GenreDTO>
+
+@{
+	ViewData["Title"] = "Главная";
+}
+
+<table class="table table-hover table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>Название категории</th>
+			<th>Количество фильмов</th>
+			<th>Действия</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var genre in Model)
+		{
+			var routeData = new Dictionary<string, string>
+		{
+		{"genreId", genre.Id.ToString() }
+		};
+	  <tr>
+	   <td><a asp-controller="Media" asp-action="Index" asp-all-route-data="routeData">@(genre.Name)</a></td>
+	   <td>@(genre.Movies.Count)</td>
+	   <td>
+		<a asp-controller="Genre" asp-action="Edit" asp-all-route-data="routeData"
+					class="btn btn-sm btn-dark">Изменить</a>
+		<a asp-controller="Genre" asp-action="Delete" asp-all-route-data="routeData"
+					class="btn btn-sm btn-danger">Удалить</a>
+	   </td>
+	  </tr>
+		}
+ </tbody>
+</table>

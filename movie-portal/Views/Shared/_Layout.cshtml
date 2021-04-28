@@ -34,16 +34,16 @@
                                 Фильмы
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" asp-controller="Media" asp-action="List">Все фильмы</a>
-                                <a class="dropdown-item" asp-controller="Media">Все жанр</a>
+                                <a class="dropdown-item" asp-controller="Media" asp-action="Index">Все фильмы</a>
+                                <a class="dropdown-item" asp-controller="Genre" asp-action="Index">Все жанры</a>
                                 <a class="dropdown-item"></a>
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" asp-controller="Media" asp-action="Create">Добавить фильм</a>
-                                    <a class="dropdown-item" asp-controller="Media" asp-action="">Добавить жанр</a>
-                                    <a class="dropdown-item" asp-controller="Media" asp-action="">Список фильмов</a>
-                                    <a class="dropdown-item" asp-controller="Media" asp-action="">Список жанров</a>
+                                    <a class="dropdown-item" asp-controller="Genre" asp-action="Create">Добавить жанр</a>
+                                    <a class="dropdown-item" asp-controller="Media" asp-action="List">Список фильмов</a>
+                                    <a class="dropdown-item" asp-controller="Genre" asp-action="List">Список жанров</a>
                                 }
                             </div>
                         </li>

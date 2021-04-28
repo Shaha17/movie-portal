@@ -1,0 +1,16 @@
+@model List<movie_portal.Models.Media.GenreDTO>
+
+<div class="container">
+
+	<div class="row d-block">
+		@foreach (var genre in Model)
+		{
+			var routeData = new Dictionary<string, string>() { { "genreId", genre.Id.ToString() } };
+	  <div class="rounded p-2 m-1" style="background-color:#D8D9DB">
+	   <div>Название: <a asp-controller="Media" asp-action="Index" asp-all-route-data="routeData">@(genre.Name)</a>
+	   </div>
+	   <div>Количество фильмов: @(genre.Movies.Count)</div>
+	  </div>
+		}
+ </div>
+</div>

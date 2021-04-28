@@ -21,6 +21,10 @@ namespace movie_portal.Controllers
 			_userManager = userManager;
 		}
 
+		public IActionResult AccessDenied()
+		{
+			return RedirectToAction("Index", "Home");
+		}
 		[HttpGet]
 		public IActionResult Login([FromQuery] string returnUrl)
 		{
