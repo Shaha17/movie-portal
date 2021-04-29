@@ -1,0 +1,74 @@
+@model List<movie_portal.Models.Media.MediaDTO>
+
+@{
+	ViewData["Title"] = "Список фильмов";
+}
+
+<table id="table" class="table table-hover table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>Название</th>
+			<th>Просмотров</th>
+			<th>Добавил</th>
+			<th>Действия</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var movie in Model)
+		{
+			var routeData = new Dictionary<string, string>
+		{
+		{"id", movie.Id.ToString() }
+		};
+	  <tr>
+	   <td>@(movie.Title)</td>
+	   <td>@(movie.Views)</td>
+	   <td>@(movie.User.UserName)</td>
+	   <td>
+		<a asp-controller="Media" asp-action="Edit" asp-all-route-data="routeData"
+					class="btn btn-sm btn-dark">Изменить</a>
+		<a asp-controller="Media" asp-action="Delete" asp-all-route-data="routeData"
+					class="btn btn-sm btn-danger">Удалить</a>
+
+	   </td>
+	  </tr>
+		}
+ </tbody>
+</table>
+
+@section Scripts {
+<script>
+	$(document).ready(function () {
+		$('#table').DataTable({
+			language: {
+				"decimal": ".",
+				"emptyTable": "Нет данных в таблице",
+				"info": "Показано с _START_ до _END_ из _TOTAL_",
+				"infoEmpty": "Показано с 0 до 0 из 0 ",
+				"infoFiltered": "(отфильтровано из _MAX_)",
+				"infoPostFix": "",
+				"thousands": ",",
+				"lengthMenu": "Показать _MENU_ на одной странице",
+				"loadingRecords": "Загрузка...",
+				"processing": "Загрузка...",
+				"search": "Поиск:",
+				"zeroRecords": "Нет подходящих записей",
+				"paginate": {
+					"first": "Первая",
+					"last": "Последняя",
+					"next": "Следующая",
+					"previous": "Предыдущая"
+				},
+				"aria": {
+					"sortAscending": ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			},
+			lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Все"]]
+
+		}
+		)
+
+	})
+</script>
+}

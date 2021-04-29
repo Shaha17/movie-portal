@@ -53,6 +53,13 @@ namespace movie_portal.Controllers
 			var dtoLst = lst.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
 			return View(dtoLst);
 		}
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> List()
+		{
+			var lst = (await _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToListAsync());
+			var dtoLst = lst.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+			return View(dtoLst);
+		}
 		[Authorize]
 		public async Task<IActionResult> AddComment(string id, string content)
 		{
@@ -266,7 +273,5 @@ namespace movie_portal.Controllers
 			}
 			return finalFileName;
 		}
-
-
 	}
 }

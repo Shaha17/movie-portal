@@ -39,6 +39,7 @@ namespace movie_portal.Models.Media
 		public DateTime? UpdateDateTime { get; set; }
 		public uint Views { get; set; } = 0;
 
+		public User User { get; set; }
 		public List<Comment> Comments { get; set; } = new List<Comment>();
 
 	}

@@ -78,5 +78,36 @@ namespace movie_portal.Controllers
 			await _moviePortalContext.SaveChangesAsync();
 			return RedirectToAction("Index", "Home");
 		}
+		[HttpGet]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Edit(string id)
+		{
+			var guidId = Guid.Parse(id);
+			var genre = await _moviePortalContext.Genres.FirstOrDefaultAsync(g => g.Id.Equals(guidId));
+
+			var genreDTO = _mapper.Map<GenreDTO>(genre);
+
+			return View(genreDTO);
+		}
+		[HttpPost]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Edit(GenreDTO model)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+			var genre = _moviePortalContext.Genres.Find(model.Id);
+
+			if (genre == null)
+			{
+				return RedirectToAction("Index", "Genre");
+			}
+
+			genre.Name = model.Name;
+
+			await _moviePortalContext.SaveChangesAsync();
+			return RedirectToAction("Index", "Home");
+		}
 	}
 }

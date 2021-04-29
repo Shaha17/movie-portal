@@ -13,6 +13,7 @@ namespace movie_portal.Models.Media
 		[Required]
 		[MinLength(3)]
 		public string Name { get; set; }
+		public bool IsDelete{ get; set; }
 
 		public ICollection<Movie> Movies { get; set; }
 

@@ -1,10 +1,10 @@
 ﻿@model List<movie_portal.Models.Media.GenreDTO>
 
 @{
-	ViewData["Title"] = "Главная";
+	ViewData["Title"] = "Список жанров";
 }
 
-<table class="table table-hover table-striped table-bordered">
+<table id="table" class="table table-hover table-striped table-bordered">
 	<thead>
 		<tr>
 			<th>Название категории</th>
@@ -17,7 +17,7 @@
 		{
 			var routeData = new Dictionary<string, string>
 		{
-		{"genreId", genre.Id.ToString() }
+		{"id", genre.Id.ToString() }
 		};
 	  <tr>
 	   <td><a asp-controller="Media" asp-action="Index" asp-all-route-data="routeData">@(genre.Name)</a></td>
@@ -27,8 +27,45 @@
 					class="btn btn-sm btn-dark">Изменить</a>
 		<a asp-controller="Genre" asp-action="Delete" asp-all-route-data="routeData"
 					class="btn btn-sm btn-danger">Удалить</a>
+
 	   </td>
 	  </tr>
 		}
  </tbody>
 </table>
+
+@section Scripts {
+<script>
+	$(document).ready(function () {
+		$('#table').DataTable({
+			language: {
+				"decimal": ".",
+				"emptyTable": "Нет данных в таблице",
+				"info": "Показано с _START_ до _END_ из _TOTAL_",
+				"infoEmpty": "Показано с 0 до 0 из 0 ",
+				"infoFiltered": "(отфильтровано из _MAX_)",
+				"infoPostFix": "",
+				"thousands": ",",
+				"lengthMenu": "Показать _MENU_ на одной странице",
+				"loadingRecords": "Загрузка...",
+				"processing": "Загрузка...",
+				"search": "Поиск:",
+				"zeroRecords": "Нет подходящих записей",
+				"paginate": {
+					"first": "Первая",
+					"last": "Последняя",
+					"next": "Следующая",
+					"previous": "Предыдущая"
+				},
+				"aria": {
+					"sortAscending": ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			},
+			lengthMenu: [ [5,10, 25, 50, -1], [5,10, 25, 50, "Все"] ]
+		}
+		)
+
+	})
+</script>
+}
