@@ -42,29 +42,28 @@ namespace movie_portal.Controllers
 		public async Task<IActionResult> Index(string genreId, int? page, string strToSearch)
 		{
 			int pageNumber = page ?? 1;
-			var lst = _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToList();
+			var lst = await _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToListAsync();
 			if (!string.IsNullOrEmpty(genreId))
 			{
-				var genre = await _moviePortalContext.Genres.FirstOrDefaultAsync(g=>g.Id.ToString().Equals(genreId));
-				System.Console.WriteLine(genre.Id);
-				System.Console.WriteLine(genre.Name);
-				System.Console.WriteLine(genreId);
+				var genre = await _moviePortalContext.Genres.FirstOrDefaultAsync(g => g.Id.ToString().Equals(genreId));
 				lst = lst.Where(p => p.Genres.Contains(genre)).ToList();
 			}
 			if (!string.IsNullOrEmpty(strToSearch))
 			{
 				string search = strToSearch.ToLower();
-				lst = lst.Where(p =>
-							{
-								return EF.Functions.Like(p.Title.ToLower(), $"%{search}%")
-									|| EF.Functions.Like(p.Description.ToLower(), $"%{search}%")
-									|| EF.Functions.Like(p.Director.ToLower(), $"%{search}%");
-							}
-							).ToList();
+				if (lst.Any())
+				{
+
+					lst = lst.Where(p =>
+								{
+									return (p.Title + " " + p.Description + " " + p.Director).ToLower().Contains(search);
+								}
+								).ToList();
+				}
 			}
 
 
-			lst = await lst.ToListAsync();
+
 			var dtoLst = lst.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
 
 			ViewBag.genreId = (dynamic)genreId;
