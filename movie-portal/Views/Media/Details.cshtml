@@ -4,7 +4,7 @@
     ViewData["Title"] = Model.Title;
 
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var genresListHtml = Model.Genres.Select(p => $"<a href=\"~/Media/?genre={p.Value}\">{p.Text}</a>").ToList();
+    var genresListHtml = Model.Genres.Select(p => $"<a href=\"/Media/?genreId={p.Value}\">{p.Text}</a>").ToList();
     var genresRawHtml = string.Join(", ", genresListHtml);
 }
 
