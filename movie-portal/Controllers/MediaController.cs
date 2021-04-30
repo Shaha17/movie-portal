@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Net;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using movie_portal.Context;
 using movie_portal.Models.Account;
 using movie_portal.Models.Media;
+using X.PagedList;
 
 namespace movie_portal.Controllers
 {
@@ -25,6 +27,8 @@ namespace movie_portal.Controllers
 		private readonly IMapper _mapper;
 		private readonly IWebHostEnvironment _webHostEnvironment;
 		private readonly UserManager<User> _userManager;
+		// private readonly int pagesize = 1;
+		private readonly int pagesize = 12;
 
 
 		public MediaController(MoviePortalContext moviePortalContext, IWebHostEnvironment webHostEnvironment, UserManager<User> userManager, IMapper mapper)
@@ -35,23 +39,37 @@ namespace movie_portal.Controllers
 			_mapper = mapper;
 		}
 
-		public async Task<IActionResult> Index(string genreId)
+		public async Task<IActionResult> Index(string genreId, int? page, string strToSearch)
 		{
-			var lst = new List<Movie>();
-			if (string.IsNullOrEmpty(genreId))
+			int pageNumber = page ?? 1;
+			var lst = _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToList();
+			if (!string.IsNullOrEmpty(genreId))
 			{
-				lst = (await _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToListAsync());
+				var genre = await _moviePortalContext.Genres.FirstOrDefaultAsync(g=>g.Id.ToString().Equals(genreId));
+				System.Console.WriteLine(genre.Id);
+				System.Console.WriteLine(genre.Name);
+				System.Console.WriteLine(genreId);
+				lst = lst.Where(p => p.Genres.Contains(genre)).ToList();
 			}
-			else
+			if (!string.IsNullOrEmpty(strToSearch))
 			{
-				var guidGenreId = Guid.Parse(genreId);
-				lst = (await _moviePortalContext.Movies
-					.Where(m => m.IsDelete == false)
-					.Where(m => m.Genres.Any(g => g.Id.Equals(guidGenreId)))
-					.ToListAsync());
+				string search = strToSearch.ToLower();
+				lst = lst.Where(p =>
+							{
+								return EF.Functions.Like(p.Title.ToLower(), $"%{search}%")
+									|| EF.Functions.Like(p.Description.ToLower(), $"%{search}%")
+									|| EF.Functions.Like(p.Director.ToLower(), $"%{search}%");
+							}
+							).ToList();
 			}
+
+
+			lst = await lst.ToListAsync();
 			var dtoLst = lst.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
-			return View(dtoLst);
+
+			ViewBag.genreId = (dynamic)genreId;
+			ViewBag.strToSearch = (dynamic)strToSearch;
+			return View(dtoLst.ToPagedList(pageNumber, this.pagesize));
 		}
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> List()
@@ -168,7 +186,8 @@ namespace movie_portal.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Admin")]
-		[RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 1024)]
+		[RequestSizeLimit(10L * 1024L * 1024L * 1024L)]
+		[RequestFormLimits(MultipartBodyLengthLimit = 10L * 1024L * 1024L * 1024L)]
 		public async Task<IActionResult> Create(MediaDTO model)
 		{
 
@@ -234,6 +253,23 @@ namespace movie_portal.Controllers
 			_moviePortalContext.Movies.Add(movie);
 			await _moviePortalContext.SaveChangesAsync();
 			return RedirectToAction("Index", "Home");
+		}
+
+		[HttpGet]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Delete(Guid Id)
+		{
+			var movie = await _moviePortalContext.Movies.FirstOrDefaultAsync(p => p.Id.Equals(Id));
+			if (movie == null)
+			{
+				return RedirectToAction("List", "Media");
+			}
+
+			movie.IsDelete = true;
+
+			await _moviePortalContext.SaveChangesAsync();
+
+			return RedirectToAction("List", "Media");
 		}
 
 		[Authorize(Roles = "Admin")]

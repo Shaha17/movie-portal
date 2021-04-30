@@ -18,10 +18,11 @@
 		{
 			var routeData = new Dictionary<string, string>
 		{
-		{"id", movie.Id.ToString() }
+		{"id", movie.Id.ToString() },
+		
 		};
 	  <tr>
-	   <td>@(movie.Title)</td>
+	   <td><a asp-controller="Media" asp-action="Details" asp-all-route-data="routeData">@(movie.Title)</a></td>
 	   <td>@(movie.Views)</td>
 	   <td>@(movie.User.UserName)</td>
 	   <td>

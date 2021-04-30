@@ -33,6 +33,7 @@ namespace movie_portal.Models.Media
 		public IFormFile ImageFile { get; set; }
 
 		public List<string> MediaFilesName { get; set; }
+		[Display(Name="Файлы фильма")]
 		public IFormFileCollection MediaFiles { get; set; }
 
 		public bool IsDelete { get; set; }

@@ -51,7 +51,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="GenresId"></label>
-                <select multiple asp-for="GenresId" asp-items="Model.Genres" class="selectpicker"></select>
+                <select multiple data-live-search="true" title="Выберите жанры" asp-for="GenresId" asp-items="Model.Genres"
+                    class="selectpicker"></select>
             </div>
             <div class="form-group">
                 <label asp-for="MediaFiles"></label>

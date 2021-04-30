@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using movie_portal.Context;
 using movie_portal.Models.Account;
 using movie_portal.Models.Media;
+using X.PagedList;
 
 namespace movie_portal.Controllers
 {
@@ -25,6 +26,8 @@ namespace movie_portal.Controllers
 		private readonly IMapper _mapper;
 		private readonly IWebHostEnvironment _webHostEnvironment;
 		private readonly UserManager<User> _userManager;
+		// private readonly int pagesize = 1;
+		private readonly int pagesize = 12;
 
 
 		public GenreController(MoviePortalContext moviePortalContext, IWebHostEnvironment webHostEnvironment, UserManager<User> userManager, IMapper mapper)
@@ -33,15 +36,16 @@ namespace movie_portal.Controllers
 			_moviePortalContext = moviePortalContext;
 			_webHostEnvironment = webHostEnvironment;
 			_mapper = mapper;
-
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(int? page)
 		{
+			int pageNumber = page ?? 1;
+
 			var lst = (await _moviePortalContext.Genres.Where(g => g.IsDelete == false).ToListAsync());
 			var dtoLst = lst.Select(g => _mapper.Map<GenreDTO>(g)).ToList();
-			return View(dtoLst);
+			return View(dtoLst.ToPagedList(pageNumber, this.pagesize));
 		}
 
 		[HttpGet]
@@ -72,6 +76,12 @@ namespace movie_portal.Controllers
 
 			var currenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+			if (_moviePortalContext.Genres.Any(g => g.Name.ToLower().Equals(model.Name.ToLower())))
+			{
+				ModelState.AddModelError("", "Жанр с таким названием уже есть в базе");
+				return View(model);
+			}
+
 			var genre = _mapper.Map<Genre>(model);
 
 			_moviePortalContext.Genres.Add(genre);
@@ -88,6 +98,31 @@ namespace movie_portal.Controllers
 			var genreDTO = _mapper.Map<GenreDTO>(genre);
 
 			return View(genreDTO);
+		}
+
+		[HttpGet]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Delete(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return RedirectToAction("List", "Genre");
+			}
+			if (!Guid.TryParse(id, out Guid guidId))
+			{
+				return RedirectToAction("List", "Genre");
+			}
+
+			var genre = await _moviePortalContext.Genres.FirstOrDefaultAsync(g => g.Id.Equals(guidId));
+			if (genre == null)
+			{
+				return RedirectToAction("List", "Genre");
+			}
+
+			genre.IsDelete = true;
+			await _moviePortalContext.SaveChangesAsync();
+
+			return RedirectToAction("List", "Genre");
 		}
 		[HttpPost]
 		[Authorize(Roles = "Admin")]

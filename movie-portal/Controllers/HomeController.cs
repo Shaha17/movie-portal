@@ -1,10 +1,4 @@
-﻿using System.Security.AccessControl;
-using System.Net.NetworkInformation;
-using System.Threading;
-using System.Text;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +9,7 @@ using movie_portal.Models.Media;
 using movie_portal.Context;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using X.PagedList;
 
 namespace movie_portal.Controllers
 {
@@ -24,6 +19,9 @@ namespace movie_portal.Controllers
 		private readonly MoviePortalContext _moviePortalContext;
 		private readonly IMapper _mapper;
 
+		// private readonly int pagesize = 1;
+		private readonly int pagesize = 12;
+
 		public HomeController(ILogger<HomeController> logger, movie_portal.Context.MoviePortalContext moviePortalContext, IMapper mapper)
 		{
 			_logger = logger;
@@ -31,18 +29,15 @@ namespace movie_portal.Controllers
 			_mapper = mapper;
 		}
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(int? page)
 		{
-			var lst = (await _moviePortalContext.Movies.ToListAsync());
+			int pageNumber = page ?? 1;
+			var lst = (await _moviePortalContext.Movies.Where(m => m.IsDelete == false).ToListAsync());
 			var dtoLst = lst.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
-			return View(dtoLst);
+
+			return View(dtoLst.ToPagedList(pageNumber, this.pagesize));
 		}
 
-		[Authorize]
-		public IActionResult Privacy()
-		{
-			return View();
-		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()

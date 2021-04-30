@@ -1,4 +1,8 @@
-@model List<movie_portal.Models.Media.GenreDTO>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Bootstrap4.Core;
+
+@model IPagedList<movie_portal.Models.Media.GenreDTO>
 
 @{
 	ViewData["Title"] = "Все жанры";
@@ -13,8 +17,14 @@
 	  <div class="rounded p-2 m-1" style="background-color:#D8D9DB">
 	   <div>Название: <a asp-controller="Media" asp-action="Index" asp-all-route-data="routeData">@(genre.Name)</a>
 	   </div>
-	   <div>Количество фильмов: @(genre.Movies.Count)</div>
+	   <div>Количество фильмов: @(genre.Movies.Where(m=>m.IsDelete==false).Count())</div>
 	  </div>
 		}
  </div>
+</div>
+
+<div>
+
+	@(Html.PagedListPager( Model, page => Url.Action("Index", new
+	{page}),Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast))
 </div>

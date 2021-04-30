@@ -1,9 +1,19 @@
-﻿@model List<movie_portal.Models.Media.MediaDTO>
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Bootstrap4.Core;
+
+@model IPagedList<movie_portal.Models.Media.MediaDTO>
+
+
 
 @{
 	ViewData["Title"] = "Главная";
 }
 
+<form asp-controller="Index" asp-action="Movie" class="form-inline my-2 my-lg-12">
+	<input class="form-control mr-sm-2" type="search" placeholder="Поиск по фильмам"  aria-label="Search">
+	<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+</form>
 <div class="row text-center ">
 	@foreach (var media in Model)
 	{
@@ -14,8 +24,8 @@
 	 <div class="col-12 col-sm-6 col-md-4 col-lg-4 text-center p-2 ">
 	  <div class="card">
 	   <img src="~/images/@media.ImageFileName"
-				style="max-height:20rem; max-width: 10rem; width: auto; height: 15rem; align-self: center;" class="card-img-top"
-				alt="@media.ImageFileName">
+				style="max-height:20rem; max-width: 10rem; width: auto; height: 15rem; align-self: center;"
+				class="card-img-top" alt="@media.ImageFileName">
 	   <div class="card-body">
 		<h5 class="card-title">@media.Title</h5>
 		<p class="card-text text-truncate">@media.Description</p>
@@ -28,3 +38,6 @@
 	 </div>
 	}
 </div>
+
+@(Html.PagedListPager( Model, page => Url.Action("Index", new
+{page,}),Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast))

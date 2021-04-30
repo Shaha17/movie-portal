@@ -17,11 +17,12 @@
 		{
 			var routeData = new Dictionary<string, string>
 		{
-		{"id", genre.Id.ToString() }
+		{"genreId", genre.Id.ToString() },
+		@* {"page","0"} *@
 		};
 	  <tr>
 	   <td><a asp-controller="Media" asp-action="Index" asp-all-route-data="routeData">@(genre.Name)</a></td>
-	   <td>@(genre.Movies.Count)</td>
+	   <td>@(genre.Movies.Where(m=>m.IsDelete==false).Count())</td>
 	   <td>
 		<a asp-controller="Genre" asp-action="Edit" asp-all-route-data="routeData"
 					class="btn btn-sm btn-dark">Изменить</a>
@@ -62,7 +63,7 @@
 					"sortDescending": ": activate to sort column descending"
 				}
 			},
-			lengthMenu: [ [5,10, 25, 50, -1], [5,10, 25, 50, "Все"] ]
+			lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Все"]]
 		}
 		)
 
