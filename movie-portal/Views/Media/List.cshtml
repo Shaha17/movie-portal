@@ -19,15 +19,15 @@
 			var routeData = new Dictionary<string, string>
 		{
 		{"id", movie.Id.ToString() },
-		
+
 		};
 	  <tr>
 	   <td><a asp-controller="Media" asp-action="Details" asp-all-route-data="routeData">@(movie.Title)</a></td>
 	   <td>@(movie.Views)</td>
 	   <td>@(movie.User.UserName)</td>
 	   <td>
-		<a asp-controller="Media" asp-action="Edit" asp-all-route-data="routeData"
-					class="btn btn-sm btn-dark">Изменить</a>
+					@* <a asp-controller="Media" asp-action="Edit" asp-all-route-data="routeData"
+						class="btn btn-sm btn-dark">Изменить</a> *@
 		<a asp-controller="Media" asp-action="Delete" asp-all-route-data="routeData"
 					class="btn btn-sm btn-danger">Удалить</a>
 
