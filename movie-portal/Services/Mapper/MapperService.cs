@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using movie_portal.Models.Account;
 using movie_portal.Models.Media;
 
 namespace movie_portal.Services.Mapper
@@ -49,6 +50,15 @@ namespace movie_portal.Services.Mapper
 				.ReverseMap()
 				.ForMember(m => m.Id, option => option.MapFrom(m => m.Id))
 				.ForMember(m => m.Name, option => option.MapFrom(m => m.Name));
+
+			this.CreateMap<User, UserDTO>()
+				.ForMember(m => m.Id, option => option.MapFrom(m => Guid.Parse(m.Id)))
+				.ForMember(m => m.ConfirmPassword, option => option.Ignore())
+				.ForMember(m => m.Email, option => option.MapFrom(m => m.Email))
+				.ForMember(m => m.Password, option => option.Ignore())
+				.ForMember(m => m.PhoneNumber, option => option.MapFrom(m => m.PhoneNumber))
+				.ForMember(m => m.UserName, option => option.MapFrom(m => m.UserName));
+
 		}
 	}
 }

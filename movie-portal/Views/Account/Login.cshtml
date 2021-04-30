@@ -16,7 +16,7 @@
                     <input type="hidden" asp-for="ReturnUrl">
                     <div class="form-group">
                         <label asp-for="UserName" class="sr-only"></label>
-                        <span asp-validation-for="UserName" class="text-danger"></span>
+                        @* <span asp-validation-for="UserName" class="text-danger"></span> *@
                         <div class="position-relative has-icon-right">
                             <input type="text" asp-for="UserName" class="form-control input-shadow"
                                 autocomplete="username" placeholder="Имя пользователя" />
@@ -27,7 +27,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Password" class="sr-only"></label>
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        @* <span asp-validation-for="Password" class="text-danger"></span> *@
                         <div class="position-relative has-icon-right">
                             <input type="password" asp-for="Password" class="form-control input-shadow"
                                 autocomplete="current-password" placeholder="Пароль" />
